@@ -15,7 +15,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val cats = MutableLiveData<List<Cat>>()
-
+    var loadCount = 0
     var isLoading = MutableLiveData(false)
     var isError = MutableLiveData(false)
     var compositeDisposable = CompositeDisposable()
@@ -29,7 +29,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (loading!=null && loading==true)
             return
 
-        val disposable = ApiFactory.apiService.loadMovies()
+        val disposable = ApiFactory.apiService.loadCats(20*loadCount)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe(
@@ -66,6 +66,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 }
             )
+        loadCount++
         compositeDisposable.add(disposable)
     }
 
